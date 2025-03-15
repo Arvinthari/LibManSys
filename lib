@@ -1,0 +1,188 @@
+#include <iostream> 
+#include <string> 
+#include <vector> 
+#include <algorithm> // For sorting books 
+ 
+// Maximum number of books in the library 
+const int MAX_BOOKS = 200; 
+ 
+// Structure to represent a book 
+struct Book { 
+    std::string title; 
+    std::string author; 
+    int bookId; 
+    bool checkedOut; 
+ 
+    Book(const std::string& _title, const std::string& _author, int _bookId) : 
+        title(_title), author(_author), bookId(_bookId), checkedOut(false) {} 
+}; 
+ 
+// Vector to store books in the library 
+std::vector<Book> library; 
+ 
+// Function to add a book to the library 
+void addBook() { 
+    if (library.size() < MAX_BOOKS) { 
+        std::string title, author; 
+        int bookId; 
+        std::cout << "Enter Book Title: "; 
+        std::getline(std::cin, title);
+        std::cout << "Enter Author: "; 
+        std::getline(std::cin, author); 
+        std::cout << "Enter Book ID: "; 
+        std::cin >> bookId; 
+        std::cin.ignore(); // Consume the newline character 
+        library.emplace_back(title, author, bookId); 
+        std::cout << "Book added to the library." << std::endl; 
+    } else { 
+        std::cout << "The library is full. Cannot add more books." << std::endl; 
+    } 
+} 
+ 
+// Function to display all books in the library 
+void displayBooks() { 
+    if (!library.empty()) { 
+        std::cout << "Library Books:" << std::endl; 
+        for (const Book& book : library) { 
+            std::cout << "Book Title: " << book.title << std::endl; 
+            std::cout << "Author: " << book.author << std::endl; 
+            std::cout << "Book ID: " << book.bookId << std::endl; 
+            std::cout << "Status: " << (book.checkedOut ? "Checked Out" : "Available") 
+<< std::endl; 
+            std::cout << std::endl; 
+        } 
+    } else { 
+        std::cout << "The library is empty. No books to display." << std::endl; 
+    } 
+} 
+ 
+// Function to search for a book in the library 
+void searchBook() { 
+    std::string query; 
+    std::cout << "Enter a search query: ";
+     std::getline(std::cin, query); 
+    bool found = false; 
+ 
+    std::cout << "Search Results:" << std::endl; 
+    for (const Book& book : library) { 
+        if (book.title.find(query) != std::string::npos || book.author.find(query) != 
+std::string::npos) { 
+            std::cout << "Book Title: " << book.title << std::endl; 
+            std::cout << "Author: " << book.author << std::endl; 
+            std::cout << "Book ID: " << book.bookId << std::endl; 
+            std::cout << "Status: " << (book.checkedOut ? "Checked Out" : "Available") 
+<< std::endl; 
+            std::cout << std::endl; 
+            found = true; 
+        } 
+    } 
+ 
+    if (!found) { 
+        std::cout << "No matching books found." << std::endl; 
+    } 
+} 
+ 
+// Function to check out a book 
+void checkOutBook() { 
+    int bookId; 
+    std::cout << "Enter Book ID to check out: "; 
+    std::cin >> bookId; 
+    bool found = false; 
+ 
+    for (Book& book : library) { 
+        if (book.bookId == bookId && !book.checkedOut) { 
+            book.checkedOut = true; 
+            found = true;
+               std::cout << "Book checked out successfully." << std::endl; 
+            break; 
+        } 
+    } 
+ 
+    if (!found) { 
+        std::cout << "Book not found or already checked out." << std::endl; 
+    } 
+} 
+ 
+// Function to return a book 
+void returnBook() { 
+    int bookId; 
+    std::cout << "Enter Book ID to return: "; 
+    std::cin >> bookId; 
+    bool found = false; 
+ 
+    for (Book& book : library) { 
+        if (book.bookId == bookId && book.checkedOut) { 
+            book.checkedOut = false; 
+            found = true; 
+            std::cout << "Book returned successfully." << std::endl; 
+            break; 
+        } 
+    } 
+ 
+    if (!found) { 
+        std::cout << "Book not found or not checked out." << std::endl; 
+    } 
+} 
+ 
+// Function to remove a book 
+void removeBook() { 
+     int bookId; 
+    std::cout << "Enter Book ID to remove: "; 
+    std::cin >> bookId; 
+ 
+    auto bookIter = std::remove_if(library.begin(), library.end(), 
+        [bookId](const Book& book) { return book.bookId == bookId; }); 
+ 
+    if (bookIter != library.end()) { 
+        library.erase(bookIter, library.end()); 
+        std::cout << "Book removed successfully." << std::endl; 
+    } else { 
+        std::cout << "Book not found." << std::endl; 
+    } 
+} 
+ 
+int main() { 
+    int choice; 
+ 
+    while (true) { 
+        std::cout << "Library Management System" << std::endl; 
+        std::cout << "1. Add a Book" << std::endl; 
+        std::cout << "2. Display All Books" << std::endl; 
+        std::cout << "3. Search for a Book" << std::endl; 
+        std::cout << "4. Check Out a Book" << std::endl; 
+        std::cout << "5. Return a Book" << std::endl; 
+        std::cout << "6. Remove a Book" << std::endl; 
+        std::cout << "7. Exit" << std::endl; 
+        std::cout << "Enter your choice: "; 
+        std::cin >> choice; 
+        std::cin.ignore(); // Consume the newline character 
+ 
+        switch (choice) { 
+            case 1:
+               addBook(); 
+                break; 
+            case 2: 
+                displayBooks(); 
+                break; 
+            case 3: 
+                searchBook(); 
+                break; 
+            case 4: 
+                checkOutBook(); 
+                break; 
+            case 5: 
+                returnBook(); 
+                break; 
+            case 6: 
+                removeBook(); 
+                break; 
+            case 7: 
+                std::cout << "Exiting the program." << std::endl; 
+                return 0; 
+            default: 
+                std::cout << "Invalid choice. Please try again." << std::endl; 
+        } 
+    } 
+ 
+    return 0; 
+}
